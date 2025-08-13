@@ -41,7 +41,7 @@ A modern, real-time IoT dashboard for monitoring home appliance energy and water
    npm install
    ```
 
-3. **Configure environment variables**
+3. **Configure environment variables** (optional)
    ```bash
    cp env.example .env
    ```
@@ -50,7 +50,7 @@ A modern, real-time IoT dashboard for monitoring home appliance energy and water
    ```env
    NEST_API_KEY=your_nest_api_key_here
    SENSE_API_KEY=your_sense_api_key_here
-   PORT=3000
+   PORT=3001
    ```
 
 4. **Start the development server**
@@ -59,9 +59,15 @@ A modern, real-time IoT dashboard for monitoring home appliance energy and water
    ```
 
 5. **Open your browser**
-   Navigate to `http://localhost:3000`
+   Navigate to `http://localhost:3001`
 
 ## 🔧 Configuration
+
+### Port Configuration
+The dashboard runs on port 3001 by default. You can change this by:
+- Setting the `PORT` environment variable
+- Modifying the `server.js` file
+- Using `PORT=3000 npm start` to override
 
 ### API Keys Setup
 
@@ -152,7 +158,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
 COPY . .
-EXPOSE 3000
+EXPOSE 3001
 CMD ["npm", "start"]
 ```
 
@@ -177,17 +183,26 @@ The dashboard provides:
 
 ### Common Issues
 
-1. **Connection Failed**
+1. **Port Already in Use**
+   ```bash
+   # Check what's using the port
+   netstat -ano | findstr :3001
+   
+   # Kill the process or use a different port
+   PORT=3002 npm start
+   ```
+
+2. **Connection Failed**
    - Check if server is running
    - Verify port configuration
    - Check firewall settings
 
-2. **API Integration Errors**
+3. **API Integration Errors**
    - Verify API keys in `.env` file
    - Check API service status
    - Review network connectivity
 
-3. **WebSocket Issues**
+4. **WebSocket Issues**
    - Ensure browser supports WebSockets
    - Check server logs for errors
    - Verify CORS configuration
@@ -197,6 +212,15 @@ Enable debug logging:
 ```bash
 DEBUG=socket.io* npm run dev
 ```
+
+## 🎯 Current Status
+
+✅ **Server**: Configured for port 3001  
+✅ **Dependencies**: All installed and ready  
+✅ **Frontend**: Complete responsive dashboard  
+✅ **Backend**: Node.js server with WebSocket support  
+✅ **API Endpoints**: All functional (mock data)  
+✅ **Real-time Updates**: WebSocket communication active  
 
 ## 🤝 Contributing
 
@@ -227,3 +251,7 @@ For support and questions:
 ---
 
 **Built with ❤️ for smart home monitoring**
+
+**Current Version**: 1.0.0  
+**Default Port**: 3001  
+**Status**: Ready to run locally
