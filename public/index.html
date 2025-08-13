@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Home Dashboard - Real-Time Monitoring</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-home"></i> IoT Home Dashboard</h1>
+                <p>Real-time monitoring of energy and water usage</p>
+                <div class="connection-status">
+                    <span id="connectionStatus" class="status-offline">
+                        <i class="fas fa-circle"></i> Offline
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard">
+            <!-- Energy Overview -->
+            <section class="dashboard-section energy-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt"></i> Energy Consumption</h2>
+                    <div class="total-power">
+                        <span id="totalPower">0</span> W
+                    </div>
+                </div>
+                
+                <div class="appliances-grid">
+                    <div class="appliance-card" data-appliance="refrigerator">
+                        <div class="appliance-icon">
+                            <i class="fas fa-snowflake"></i>
+                        </div>
+                        <div class="appliance-info">
+                            <h3>Refrigerator</h3>
+                            <div class="power-display">
+                                <span class="power-value" id="refrigerator-power">0</span> W
+                            </div>
+                            <div class="status-indicator" id="refrigerator-status">Off</div>
+                        </div>
+                        <button class="toggle-btn" onclick="toggleAppliance('refrigerator')">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </div>
+
+                    <div class="appliance-card" data-appliance="washing_machine">
+                        <div class="appliance-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <div class="appliance-info">
+                            <h3>Washing Machine</h3>
+                            <div class="power-display">
+                                <span class="power-value" id="washing_machine-power">0</span> W
+                            </div>
+                            <div class="status-indicator" id="washing_machine-status">Off</div>
+                        </div>
+                        <button class="toggle-btn" onclick="toggleAppliance('washing_machine')">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </div>
+
+                    <div class="appliance-card" data-appliance="dishwasher">
+                        <div class="appliance-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="appliance-info">
+                            <h3>Dishwasher</h3>
+                            <div class="power-display">
+                                <span class="power-value" id="dishwasher-power">0</span> W
+                            </div>
+                            <div class="status-indicator" id="dishwasher-status">Off</div>
+                        </div>
+                        <button class="toggle-btn" onclick="toggleAppliance('dishwasher')">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </div>
+
+                    <div class="appliance-card" data-appliance="oven">
+                        <div class="appliance-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="appliance-info">
+                            <h3>Oven</h3>
+                            <div class="power-display">
+                                <span class="power-value" id="oven-power">0</span> W
+                            </div>
+                            <div class="status-indicator" id="oven-status">Off</div>
+                        </div>
+                        <button class="toggle-btn" onclick="toggleAppliance('oven')">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </div>
+
+                    <div class="appliance-card" data-appliance="tv">
+                        <div class="appliance-icon">
+                            <i class="fas fa-tv"></i>
+                        </div>
+                        <div class="appliance-info">
+                            <h3>TV</h3>
+                            <div class="power-display">
+                                <span class="power-value" id="tv-power">0</span> W
+                            </div>
+                            <div class="status-indicator" id="tv-status">Off</div>
+                        </div>
+                        <button class="toggle-btn" onclick="toggleAppliance('tv')">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Water Monitoring -->
+            <section class="dashboard-section water-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-tint"></i> Water Usage</h2>
+                </div>
+                
+                <div class="water-metrics">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>Current Flow</h3>
+                            <div class="metric-value">
+                                <span id="waterFlow">0</span> L/min
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>Temperature</h3>
+                            <div class="metric-value">
+                                <span id="waterTemp">20</span>°C
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>Total Usage</h3>
+                            <div class="metric-value">
+                                <span id="waterTotal">0</span> L
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Environment Monitoring -->
+            <section class="dashboard-section environment-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-leaf"></i> Environment</h2>
+                </div>
+                
+                <div class="environment-metrics">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>Temperature</h3>
+                            <div class="metric-value">
+                                <span id="envTemp">22</span>°C
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>Humidity</h3>
+                            <div class="metric-value">
+                                <span id="envHumidity">45</span>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>Air Quality</h3>
+                            <div class="metric-value">
+                                <span id="airQuality">Good</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Integration Status -->
+            <section class="dashboard-section api-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-plug"></i> API Integrations</h2>
+                </div>
+                
+                <div class="api-status">
+                    <div class="api-card">
+                        <div class="api-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <div class="api-content">
+                            <h3>Nest Thermostat</h3>
+                            <div class="api-status-indicator" id="nest-status">
+                                <i class="fas fa-circle"></i> Connected
+                            </div>
+                            <div class="api-data">
+                                Target: <span id="nest-target">22</span>°C
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-card">
+                        <div class="api-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="api-content">
+                            <h3>Sense Energy</h3>
+                            <div class="api-status-indicator" id="sense-status">
+                                <i class="fas fa-circle"></i> Connected
+                            </div>
+                            <div class="api-data">
+                                Daily: <span id="sense-daily">0</span> kWh
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 IoT Home Dashboard. Real-time monitoring with WebSocket updates.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
